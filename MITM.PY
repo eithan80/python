@@ -1,12 +1,4 @@
-n = 19 
-g =3 
-secret = 15 
-secert_bob = 5
-B = g^ secret % n
-A = g ^ secert_bob % n 
 
-s = B ^ secert_bob % n 
-print(s)
 
 import scapy.all as scapy
 import time
