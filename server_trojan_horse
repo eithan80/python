@@ -1,0 +1,39 @@
+import socket
+import ssl
+import random
+import string
+
+# יצירת מילת סוד אקראית
+def generate_secret(length=32):
+    letters = string.ascii_letters + string.digits
+    return ''.join(random.choice(letters) for _ in range(length))
+
+def start_server():
+    host = '127.0.0.1'
+    port = 8080
+
+    # יצירת סוקט TCP והאזנה
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.bind((host, port))
+    sock.listen(5)
+    print(f"Server listening on {host}:{port}...")
+
+    while True:
+        client_socket, addr = sock.accept()
+        print(f"Connection from {addr}")
+
+        # עטיפת הסוקט ב-SSL עם שימוש בקובץ .pfx
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        context.load_cert_chain(certfile="C:/Users/Owner/Desktop/server-cert.pem", keyfile="C:/Users/Owner/Desktop/server-key.pem", password="YourPassword")
+
+
+        ssl_socket = context.wrap_socket(client_socket, server_side=True)
+
+        # שליחת הודעה ללקוח
+        ssl_socket.send(b"Hello from server over SSL!")
+
+        ssl_socket.close()
+        client_socket.close()  # סגירת ה-client socket הלא מוצפן
+
+# הפעלת השרת
+start_server()
