@@ -1,0 +1,9 @@
+    CollegeStudent student = new CollegeStudent("Alice", 12345, 21, "Computer Science", 88.5);
+
+   
+    Console.WriteLine(student.display_information());
+
+    
+    Tuple<string, int, int> studentInfo = student.GetStudentInfo();
+    Console.WriteLine($"Tuple Information: Name: {studentInfo.Item1}, ID: {studentInfo.Item2}, Age: {studentInfo.Item3}");
+}
