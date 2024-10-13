@@ -1,0 +1,17 @@
+ public class CollegeStudent : STUDENTS
+ {
+     protected string subject;
+     protected double avg;
+
+     public CollegeStudent(string name, int student_id, int age, string subject, double average)
+        : base(name, student_id, age)
+     {
+         this.subject = subject;
+         this.avg = average;
+     }
+
+     public override string display_information()
+     {
+         return $"{base.display_information()}\nSubject: {this.subject}\nAverage: {this.avg}";
+     }
+ }
