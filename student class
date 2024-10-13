@@ -1,0 +1,35 @@
+public class STUDENTS
+{
+     private string name; 
+   private int student_id;
+    private int age;
+
+    public STUDENTS(string name, int student_id, int age)
+    {
+        this.name = name;
+        this.student_id = student_id;
+        this.age = age;
+    }
+
+    public virtual string display_information()
+    {
+        return ($"the student name is {this.name}\n his/hers id is {this.student_id} \n and his/her age is {this.age}");
+    }
+
+    public Tuple<string, int, int> GetStudentInfo()
+    {
+        return Tuple.Create(this.name, this.student_id, this.age);
+    }
+
+    public int get_student_id() { return student_id; }
+    public int get_age() { return age;}
+    
+    public string get_name() { return name;}
+
+    public void set_name(string name) { this.name = name;}
+
+    public void get_age(int age) { this.age = age;}
+
+    public  void get_id(int id) {this.student_id = id;}
+
+}
